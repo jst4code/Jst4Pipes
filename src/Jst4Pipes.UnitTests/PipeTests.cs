@@ -69,28 +69,4 @@ namespace Jst4Pipes.UnitTests
 
         public static implicit operator StringWrapper(string value) => new StringWrapper(value);
     }
-
-    //public class LoggingFilter<TContent> : Filter<TContent>
-    //{
-    //    protected override async Task Execute(TContent context, Func<TContent, Task> next)
-    //    {
-    //        Console.WriteLine("Before Request");
-    //        await next(context);
-    //        Console.WriteLine("After Request");
-    //    }
-    //}
-
-    //public class TimingFilter<TContent> : Filter<TContent>
-    //{
-    //    protected override async Task Execute(TContent context, Func<TContent, Task> next)
-    //    {
-    //        var sw = new Stopwatch();
-    //        sw.Start();
-    //        await next(context);
-    //        sw.Stop();
-
-    //        Console.WriteLine($"Completed request in {sw.ElapsedMilliseconds}ms");
-    //    }
-    //}
-
 }
