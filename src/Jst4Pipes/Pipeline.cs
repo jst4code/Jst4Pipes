@@ -15,27 +15,21 @@ namespace Jst4Pipes
             return this;
         }
 
-        public void Execute(TContext context)
-        {
-            Execute(context, 0);
-        }
+        public TContext Execute(TContext context) 
+            => MiddlewaresWithSequence()
+                .Aggregate(
+                    _defaultHandler, 
+                    (next, middleware) => middleware.PartialRight(next))
+                (context);
 
-        private void Execute(TContext contaxt, int level)
-        {
-            if (level < _middlewares.Count)
-            {
-                _middlewares[level].Execute(contaxt, GetNextAction(level));
-            }
-        }
+        private IEnumerable<IMiddleware<TContext>> MiddlewaresWithSequence() => _middlewares.AsEnumerable().Reverse().ToList();
 
-        private Action<TContext> GetNextAction(int level)
-        {
-            if (level < _middlewares.Count - 1)
-            {
-                Action<TContext, Action<TContext>> nextAction = _middlewares[level + 1].Execute;
-                return nextAction.PartialRight(GetNextAction(level + 1));
-            }
-            return ctx => { };
-        }
+        private static Func<TContext, TContext> _defaultHandler = ctx => ctx;
+    }
+
+    public static class MiddlewareExtensions
+    { 
+        public static Func<TContext, TContext> PartialRight<TContext>(this IMiddleware<TContext> middleware, Func<TContext, TContext> next)
+            => PartialExecutionHelperMethods.PartialRight<TContext, Func<TContext, TContext>>(middleware.Execute, next);
     }
 }
